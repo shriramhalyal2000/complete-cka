@@ -1,0 +1,5 @@
+1. Configure
+    >> Decide the hardware to tun the clutser, in which how many nodes(vm/physical machines to run kuberneetes).
+2. Install docker deamon or ContainerD
+3. Install Kubeadm follow doccumentation to which OS- based installtion to follow.
+4. Join the masternode/controleplane to the rest of worker node hwre Pod network kubelet CRI-O are preconfigured.
