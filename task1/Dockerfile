@@ -7,7 +7,9 @@ COPY package*.json ./
 
 # 2. Build stage (Installs ALL dependencies and builds the app)
 FROM base AS build
+#run npm clean install all dependencies
 RUN npm ci 
+# copy the code on to container
 COPY . .
 # Note: Ensure "build" is defined in your package.json scripts (npm run build)
 RUN npm run build
