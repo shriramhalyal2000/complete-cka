@@ -1,27 +1,32 @@
-ARG NODE_VERSION = 24-alpine
-FROM node-${NODE_VERSION} AS base
+ARG NODE_VERSION=24-alpine
 
+# 1. Base stage for shared configuration
+FROM node:${NODE_VERSION} AS base
 WORKDIR /app
-#clean npm install prod
 COPY package*.json ./
 
-RUN npm ci --production
-#installing necessary dependencies for build froma pplication dependencies package
-FROM deps AS base
-#copy code
+# 2. Build stage (Installs ALL dependencies and builds the app)
+FROM base AS build
+RUN npm ci 
 COPY . .
-#building the application from installed dependencies package
-RUN npm build
+# Note: Ensure "build" is defined in your package.json scripts (npm run build)
+RUN npm run build
 
-FROM node-${NODE_VERSION} AS runner
+# 3. Production dependencies stage (Only keeps runtime dependencies)
+FROM base AS prod-deps
+RUN npm ci --only=production
 
+# 4. Final runner stage (Ultra-lean production image)
+FROM node:${NODE_VERSION} AS runner
+ENV NODE_ENV=production
 WORKDIR /app
-#use lib build or dist depending on production requirement
-COPY --from=build /app/dist ./dist \
-COPY --from=build /app/node_modules /node_modules \
+
+# Copy compiled code from the build stage
+COPY --from=build /app/dist ./dist
+
+# Copy ONLY production dependencies from the prod-deps stage
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY package*.json ./
 
-
-#5000 depending on service type
 EXPOSE 3000
-CMD ["node", "dist/server.js"] 
+CMD ["node", "dist/server.js"]
