@@ -18,8 +18,8 @@ FROM node-${NODE_VERSION} AS runner
 WORKDIR /app
 #use lib build or dist depending on production requirement
 COPY --from=build /app/dist ./dist \
-     --from=build /app/node_modules /node_modules \
-     package*.json ./
+COPY --from=build /app/node_modules /node_modules \
+COPY package*.json ./
 
 
 #5000 depending on service type
