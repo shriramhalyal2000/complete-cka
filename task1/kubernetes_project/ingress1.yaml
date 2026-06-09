@@ -1,0 +1,27 @@
+# path based routing where distinct paths of host are configured for different service routing
+# two different path same host url http
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: path-routing-ingress
+spec:
+  rules:
+    - host: foo.bar.com
+      http:
+        paths:
+          - path: /first
+            pathType: Prefix
+            backend:
+              service:
+                - name: pod-service
+                  port:
+                    - number: 80
+        paths:
+          - path: /second
+            pathType: Prefix
+            backend:
+              service:
+                - name: pod-service
+                  port:
+                    - number: 80
+                  
