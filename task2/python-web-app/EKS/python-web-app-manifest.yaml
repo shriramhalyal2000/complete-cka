@@ -27,7 +27,7 @@ spec:
               mountPath: /etc/secrets
           ports:
             - containerPort: 8000
-          resources:
+          resources: # stopps nodes and pods from crashing limiting pods to access and equest more resource from cluster limiting them with threshold required cpu and memory
             limits:
               cpu: "500m"
               memory: "512Mi"
