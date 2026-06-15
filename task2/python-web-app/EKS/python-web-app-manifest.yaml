@@ -24,9 +24,16 @@ spec:
             - name: configmap-mount
               mountPath: /etc/configmap
             - name: secrets-mount
-              mountPath: etc/secrets
+              mountPath: /etc/secrets
           ports:
             - containerPort: 8000
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
       volumes:
         - name: configmap-mount
           configMap:
@@ -44,8 +51,8 @@ spec:
     app: python-webb # match service with container app label for service to find pod for network 
   type: ClusterIP
   ports:
-    - port: 80
-      targetPort: 80
+    - port: 80 # service port
+      targetPort: 8000 # containerport
       protocol: TCP
 ---
 apiVersion: v1
@@ -60,6 +67,6 @@ kind: Secret
 metadata:
   name: app-secret
   namespace: default
-type: opaque
+type: Opaque
 data:
-  db-username: dXNlcm5hbWUK
+  db-username: dXNlcm5hbWU=
