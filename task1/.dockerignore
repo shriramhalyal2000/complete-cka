@@ -1,0 +1,48 @@
+# .dockerignore
+# Keeps the build context small, speeds up the build, and prevents security leaks.
+
+# Dependency directories (Generated fresh inside Docker)
+node_modules/
+jspm_packages/
+.pnp/
+.pnp.js
+
+# Local Build and Output directories (Docker will generate its own 'dist')
+dist/
+build/
+.next/
+out/
+
+# Debug and Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Version Control
+.git
+.gitignore
+.gitattributes
+
+# Testing and Coverage
+coverage/
+.nyc_output/
+
+# Environment Variables and Secrets (CRITICAL: Never bake these into an image)
+.env
+.env.*
+*.pem
+*.key
+*.cert
+
+# Documentation
+README.md
+CHANGELOG.md
+.github/

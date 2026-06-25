@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-lifeCycle
+  labels:
+    app: nginx-app
+spec:
+  replicaset: 2
+  selector:
+    matchLabels:
+      app: nginx-app
+  template:
+    metadata:
+      labesl:
+        app: nginx-app
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:alpine-18 

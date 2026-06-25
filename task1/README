@@ -1,0 +1,3 @@
+wehn a minikube cluster is running, it sshould have its defalut kube-* 
+namespace and its cluster ip services running, 
+nothing else in deployment, replicaset, and pods or any other namespace
