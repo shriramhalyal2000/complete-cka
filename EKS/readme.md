@@ -1,0 +1,1 @@
+This is a poc for runnign 2 controlplane and 2 dta plane eks cts with minimal instance load with cluster ip and accessible only via ingress control defined by ingress resource and a cloud perovider managed loadBalancer.
