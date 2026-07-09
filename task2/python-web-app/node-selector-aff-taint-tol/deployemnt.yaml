@@ -34,7 +34,6 @@ spec:
               operator:
               values:
               - 
-
       containers:
       - name: nginx-container
         image: nginx:alpine
