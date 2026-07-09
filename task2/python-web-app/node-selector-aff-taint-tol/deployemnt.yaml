@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployemnt
+metadata:
+  name: nginx-depl
+  labels:
+    app: ngix-app
+    tier: web-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-app
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-app
+        tier: web-server
+    spec:
+      # for kubectl taint node <node-name> dedicated=gpu:NoSchedule
+      tolerations:
+      - key: "dedicated"
+        operator: "Equals"
+        value: "gpu"
+        effect: "NodeSchedule"
+      node-selector: 
+        name: <> # only pods with node name selector can be scheduled  on that nodes
+      nodeAffinity: # node affinity is configured for pod duing scheduling, and repective node is also configured to have which kind of pods on it
+        preferdDuringSchedulingIgnoredDuringExecution:
+          weigh:
+            preference:
+            matchExpressions:
+            - key:
+              operator:
+              values:
+              - 
+      containers:
+      - name: nginx-container
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        resources:
+          limit:
+            cpu: 2
+            memory: 400Mib
+          request:
+            cpu: 4
+            memory: 400Mib
