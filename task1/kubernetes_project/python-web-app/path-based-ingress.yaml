@@ -14,11 +14,10 @@ spec:
                 name: python-web-app-service
                 port:
                   number: 80
-        paths:
-          - path:
-            pathType:
+          - path: /
+            pathType: Prefix
             backend:
               service:
-                - name:
+                  name: python-web-app-service
                   port:
-                    number: 
+                    number: 80
