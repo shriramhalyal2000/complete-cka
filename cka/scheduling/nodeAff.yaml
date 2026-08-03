@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: node-selector-pod
+  name: node-aff
   labels:
     app: nginx
     tier: front-end
