@@ -1,21 +1,28 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: node-selector-pod
+  name: node-selector
   labels:
     app: nginx
     tier: front-end
-  namespace: default
+  namespace: dev
 spec:
-  # any pod without this toleration wont be scheduled on a node with taint of hardware=high-performance:NoSchedule effect
+  affinity: # with node affinity pods are only directed towards this node
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: "tainted"
+                operator: "In"
+                values:
+                - "yes"
+    # any pod without this toleration wont be scheduled on a node with taint of hardware=high-performance:NoSchedule effect
   # meaning only high perfomance pods should be scheduled here
   tolerations:
-  - key: hardware
-    operator: Equals
-    value: high-performance
-    effect: NoSchedule
-  nodeSelector:
-    name: node01
+  - key: "type"
+    operator: "Equal"
+    value: "hp"
+    effect: "NoSchedule"
   containers:
   - name: nginx-container
     image: nginx:1.25

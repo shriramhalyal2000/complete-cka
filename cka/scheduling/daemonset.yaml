@@ -15,8 +15,11 @@ spec:
       labels:
         app: nginx
     spec:
-      nodeSelector:
-        name: node01
+      tolerations:
+      - key: "type"
+        operator: "Equal"
+        value: "hp"
+        effect: "NoSchedule"
       containers:
       - name: nginx-container
         image: nginx:1.25

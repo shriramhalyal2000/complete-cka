@@ -12,12 +12,12 @@ spec:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
         - matchExpressions:
-          - key: hardware
-            operator: Exists
+          - key: "tanited"
+            operator: "In"
             values: 
-            - high-performance
+            - "yes"
   nodeSelector:
-    name: node01
+    name: node02
   containers:
   - name: nginx-container
     image: nginx:1.25
