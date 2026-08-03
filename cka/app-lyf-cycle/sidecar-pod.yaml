@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-containers
+  labels:
+    app: nginx
+    tier: frontend
+  namespace: dev
+spec:
+  initContainers:
+    - name: init-container-name
+      image: busybox
+      restartPolicy: always # this is what distinguishes between initContainer and SidecarContainer
+      cmd: ["sleep", "100000"]
+  containers:
+    - name: nginx-container
+      image: nginx
+      restartPolicy: always
+      ports:
+      - containerPort: 8080
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "128Mi"
+        limits:
+          cpu: "100m"
+          memory: "256Mi"
