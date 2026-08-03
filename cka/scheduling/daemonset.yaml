@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: DaemonSet
+metadata:
+  name: node-selector-pod
+  labels:
+    app: nginx
+    tier: front-end
+  namespace: default
+spec:
+  nodeSelector:
+    name: node01
+  containers:
+  - name: nginx-container
+    image: nginx:1.25
+    protocol: TCP
+    ports:
+    - containerPort: 80
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "128Mi"
+      limits:
+        cpu: "100m"
+        memory: "256Mi"

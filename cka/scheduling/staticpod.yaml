@@ -1,0 +1,24 @@
+# this wont be executed by kubectl but ssh into desired node one and placing this manifest on /etc/kubenetes/manifest/ where kubelet can access this to schedule this pod
+apiVersion: v1
+kind: Pod
+metadata:
+  name: node-selector-pod
+  labels:
+    app: nginx
+    tier: front-end
+  namespace: default
+spec:
+  nodeSelector:
+    name: node01
+  containers:
+  - name: nginx-container
+    image: nginx:1.25
+    ports:
+    - containerPort: 80
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "128Mi"
+      limits:
+        cpu: "100m"
+        memory: "256Mi"
