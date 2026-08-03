@@ -4,6 +4,7 @@ kind: PriorityClass
 metadata:
   name: high-priority
   namespace: default
-values: 1000000000
+values: 1000000000 # defines this priority class as high, 
+preemptionPolicy: PreemptLowerPolicy # any pod with less than this remove them and add pods with this preemptionPolicy
 flobalDefault: false
 description: priority class should be used for this pod class.

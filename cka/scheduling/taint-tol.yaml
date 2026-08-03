@@ -23,6 +23,7 @@ spec:
     operator: "Equal"
     value: "hp"
     effect: "NoSchedule"
+  priorityClassName: high-priority
   containers:
   - name: nginx-container
     image: nginx:1.25
