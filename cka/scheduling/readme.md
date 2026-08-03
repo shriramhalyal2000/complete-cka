@@ -30,3 +30,6 @@
 2. As mentioned , if multple applications exits, only one copy of it made sure by daemonset tobe schedulde on every node.
 3. If only application is running, then a copy of it can be found on evry node, given it also has been configured with <<taint>,<tolerations>. 
 4. Do node add Nodeaffinity, it defeats the purpose.
+# Priorityclass
+1. Defined with preemption value, any pod with less value will eb prempted(removed) to facilitate current pod with priority class value more than it.
+2. preemptionPolicy are preemptlower, never, with specific pods referencing this class or can be set as global default across cluster resource.
