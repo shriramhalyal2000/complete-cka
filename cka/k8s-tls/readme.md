@@ -9,3 +9,10 @@
    - $ openssl req -new -key **name**.key -subj "/CN=KUBERNETES-CA" -out **name**.csr
    - $ openssl x509 -req -in **name**.csr -signkey **name**.key -out **name**.crt
    - you can add **name**=ca for Certificate Authority.
+2. Signing for Admin user
+ - $ openssl genrsa -out admin.key 2048 -> generate key
+ - $ openssl req  -new - key admin.key -subj "/CN=Kube-admin" -out admin.csr -> csr to generate key sign by CA to requester.
+ - $ openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -out admin.crt -> signed key put to  certificate by CA, then the relevent crt added to user group on cluster.
+   - /CA=kube-admin/OU=System:Masters for adding certificate to k8s user group.
+3. Signing User/Client certificates with appropriate names and assigned groups.
+4. Same as Serve side Certificates are issues, so does the Api-server server/cleint certificates are issued seperately.
