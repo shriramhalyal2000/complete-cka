@@ -7,8 +7,8 @@
 6. Static pods
 7. Priority class
 # label node:
-1. kubectl label node <node-name> <key>=<value> to label it with desired key and value, 
-2. kubectl label node <node-name> <key>- to unlabel it.
+1. kubectl label node **node-name** **<**key**=**value** to label it with desired key and value, 
+2. kubectl label node **node-name** **key**- to unlabel it.
  - this labels can be put into pods by pod sec: nodeName/nodeSelector properties
  # node affinity:
  1. for node affinity, defined in pod spec, required during scheduling, ignored during execution, condition,
@@ -28,7 +28,7 @@
 # Daemonsets
 1. making sure exactly one pod of application or if cluster has multple applications then every nodes has copy of application on every node across cluster for H/A.
 2. As mentioned , if multple applications exits, only one copy of it made sure by daemonset tobe schedulde on every node.
-3. If only application is running, then a copy of it can be found on evry node, given it also has been configured with <<taint>,<tolerations>. 
+3. If only application is running, then a copy of it can be found on evry node, given it also has been configured with **taint**,**tolerations**. 
 4. Do node add Nodeaffinity, it defeats the purpose.
 # Priorityclass
 1. Defined with preemption value, any pod with less value will eb prempted(removed) to facilitate current pod with priority class value more than it.
