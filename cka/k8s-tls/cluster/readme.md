@@ -1,4 +1,4 @@
-# this is a kind cluster setup to perform cka TLS POC
+# This is a kind cluster setup to perform cka TLS POC
 
 * certificate (public)
   - clint.crt
@@ -20,3 +20,11 @@
  - $ kubectl get csr , find pending csr
  - $ kubectl certificate apprive/deny csr-name-pending
  - $ kubectl delete certificate csr-name to revoke status
+2. This POC shows a admin perm user manually approves the csr, raised by user to kube-apiserver-client, but in prod grade a CA server approves csr raised by new user.
+  - since default-user is Kubenetes-admin inkind cluster, cluster user has to mannually approve it. 
+# kubeconfig is generated when cluster is created, 
+1. of using resource config cluster is generated , if kubeadmini used, seperate resource.yaml file created with certificate loaded and their location.
+2. In kind cluster you only need cluster certificate. 
+3. Kubeconfig can be found in >>$HOME/.kube dir of vm/server
+4. It can also be configured what can user preform in cluster, like get pods, get node, "get", "apply", "replace", "describe",
+   these verb can be implimented to user so only desired actions  can be performed with least previllages

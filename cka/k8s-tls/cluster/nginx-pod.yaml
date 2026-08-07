@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+    tier: dev
+  namespace: dev
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx:alpine
+    ports:
+    - containerPort: 8080
+    resources:
+      limits:
+        cpu: "1000m"
+        memory: "256Mi"
+      requests:
+        cpu: "50m"
+        memory: "126Mi"
