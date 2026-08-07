@@ -1,3 +1,4 @@
-shri.key
-shri.crt
-shri.csr
+*.key
+*.crt
+*.csr
+*.xlsx
