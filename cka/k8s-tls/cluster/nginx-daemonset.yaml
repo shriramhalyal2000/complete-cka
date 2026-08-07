@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nginx-daemon
+  labels:
+    app: nginx
+    tier: daemon
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx
+        tier: daemon
+    spec:
+      tolerations:
+      - key: "node"
+        operator: "Equal"
+        value: "prod"
+        effect: "NoSchedule"
+      containers:
+      - name: nginx-daemon-container
+        image: nginx:alpine
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: "1000m"
+            memory: "256Mi"
+          requests:
+            cpu: "50m"
+            memory: "126Mi"
