@@ -18,12 +18,17 @@ spec:
         tier: daemon
     spec:
       tolerations:
-      - key: "node"
+      - key: "hw"
         operator: "Equal"
-        value: "prod"
+        value: "hp"
         effect: "NoSchedule"
+      - key: "hw"
+        operator: "Equal"
+        value: "lp"
+        effect: "PreferNoSchedule"
       containers:
       - name: nginx-daemon-container
+        imagePullPolicy: IfNotPresent
         image: nginx:alpine
         ports:
         - containerPort: 8080

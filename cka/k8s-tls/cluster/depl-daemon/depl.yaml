@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox-depl
+  labels:
+    app: busybox
+    tier: front-end
+  namespace: dev
+spec:
+  selector:
+    matchLabels:
+      app: busybox
+  replicas: 2
+  template:
+    metadata:
+      name: busybox-pod
+      labels:
+        app: busybox
+        tier: front-end
+    spec: # deployment pod with toleration of both nodes dev-worker, dev-worker2, and only nodeAffinity towards them. with same key dofferent values.
+      tolerations:
+      - key: "hw"
+        operator: "Equal"
+        value: "hp"
+        effect: "NoSchedule"
+      - key: "hw"
+        operator: "Equal"
+        value: "lp"
+        effect: PreferNoSchedule
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "vm"
+                operator: "In"
+                values:
+                - "dev"
+                - "prod"
+      containers:
+      - name: busybox-container
+        imagePullPolicy: IfNotPresent
+        image: busybox:stable
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+          requests:
+            cpu: "50m"
+            memory: "126Mi"
