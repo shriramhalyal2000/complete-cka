@@ -34,7 +34,7 @@ spec:
             - matchExpressions:
               - key: "vm"
                 operator: "In"
-                values:
+                values: # same key with different values on node labels
                 - "dev"
                 - "prod"
       containers:
