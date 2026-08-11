@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: liveness
+  labels:
+    app: busybox
+    tier: liveness
+  namespace: dev
+spec:
+  containers:
+  - name: busybox-container
+    priorityClassNAme: high-priority
+    imagePullPolicy: IfNotPresent
+    image: busybox:1.27.2
+    ports:
+    - containerPort: 80
+    startupProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 10
+      periodDelaySeconds: 1
+      timeoutSeconds: 1
+      failureThreshold: 3
+    readinessProb:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 15
+      perioddelaySeconds: 1
+      timeoutSeconds: 2
+      failureThreadhold: 3
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 5 # how much time it shoyuld wait before executing httpGet 
+      periodSeconds: 10 # defines interval set for this methods on pod
+      timeoutSeconds: 1 # time after probe times out
+      failureThreadhold: 3 # homany failure can it sustain before not restarting and letting it crash
+    resources:
+      limits:
+        cpu: "1000m"
+        memory: "256Mi"
+      requests:
+        cpu: "50m"
+        memory: "126Mi"

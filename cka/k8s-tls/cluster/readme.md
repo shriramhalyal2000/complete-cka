@@ -28,3 +28,11 @@
 3. Kubeconfig can be found in >>$HOME/.kube dir of vm/server
 4. It can also be configured what can user preform in cluster, like get pods, get node, "get", "apply", "replace", "describe",
    these verb can be implimented to user so only desired actions  can be performed with least previllages
+5. The cluster contexts created can be passed as arguments with kubectl config command
+  - $ kubectl config use-context dev-cluster-user
+  - $ kubectl config
+6. Namespace can be preloaded for contexts, as when used, configured namespace is preloaded.
+7. $ kubectl config set credentials dev-user \
+     --client-certificate=/etc/kubernetes/pki/dev-user/dev-user.crt \
+     --client-key=//etc/kubernetes/pki/dev-user/dev-user.key \
+     --kubeconfig=/etc/my-kube-config
