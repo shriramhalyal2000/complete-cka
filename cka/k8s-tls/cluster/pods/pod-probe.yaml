@@ -19,7 +19,7 @@ spec:
         path: /
         port: 80
       initialDelaySeconds: 10
-      periodDelaySeconds: 1
+      periodDelaySeconds: 15
       timeoutSeconds: 1
       failureThreshold: 3
     readinessProb:
@@ -27,8 +27,8 @@ spec:
         path: /
         port: 80
       initialDelaySeconds: 15
-      perioddelaySeconds: 1
-      timeoutSeconds: 2
+      perioddelaySeconds: 10
+      timeoutSeconds: 1
       failureThreadhold: 3
     livenessProbe:
       httpGet:
