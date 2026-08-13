@@ -15,6 +15,7 @@ spec:
       labels:
         app: nginx
     spec:
+      priorityClassName: high-priority
       tolerations:
       - key: "type"
         operator: "Equal"

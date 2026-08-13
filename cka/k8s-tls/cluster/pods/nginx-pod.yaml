@@ -10,8 +10,18 @@ spec:
   containers:
   - name: nginx-container
     image: nginx:alpine
+    priorityClassName: high-priority
     ports:
     - containerPort: 8080
+    args:
+    - /bin/sh
+    - -c
+    - touch /tmp/healthy; sleep 30 rm -f /tmp/healthy; sleep 600
+    livenessProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
     resources:
       limits:
         cpu: "1000m"
