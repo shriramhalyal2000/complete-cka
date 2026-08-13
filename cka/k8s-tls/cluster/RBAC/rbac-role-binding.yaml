@@ -1,0 +1,12 @@
+apiVersion: rbac.authorisation.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developer-role-binding
+subjects: # binds user to rbac
+- kind: user # user details in subject
+  name: dev-user
+  apiGroup: rbac.authorisation.k8s.io/v1
+roleRef: # role details to bind user to that role with rbac.
+  kind: Role
+  name: developer
+  apiGroup: rbac.authorisation.k8s.io/v1
