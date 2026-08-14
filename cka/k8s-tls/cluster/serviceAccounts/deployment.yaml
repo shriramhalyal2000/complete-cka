@@ -29,6 +29,23 @@ spec:
         - name: token
           mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           readOnly: true
+        - name: db-connector
+          mountPath: /var/app/db-connector
+          readOnly: true
+        - name: db-password
+          mountPath: /var/app/db-password
+          readOnly: true
+        env: # this is also a version of how to inject env value directly into pod
+        - name: DB_USR
+          valueFrom:
+            configMapKeyRef:
+              name: db_env # configmap name
+              key: db-user # configmap key ion data
+        - name: DB_PSWD
+          valueFrom:
+            secretKeyRef:
+              name: db_pswd # secrets file name
+              key: psswd # secrets data key
       serviceAccountName: aws-service-account
       automountServiceAccountToken: false
       tolerations:
@@ -56,3 +73,7 @@ spec:
           sources:
           - serviceAccountToekn:
             name: token
+          - configMap:
+            name: db-connector # use the configmap with same name 
+          - secret:
+            name: db-password # use secret with same name
