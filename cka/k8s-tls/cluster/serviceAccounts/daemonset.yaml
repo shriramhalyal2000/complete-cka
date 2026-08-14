@@ -7,7 +7,6 @@ metadata:
     tier: front-end
   namespace: dev
 spec:
-  replicas: 3
   selector:
     matchLabels:
       app: nginx
@@ -90,16 +89,6 @@ spec:
         operator: "Equal"
         value: "stage"
         effect: "PreferNoSchedule"
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: "hw"
-                    operator: "In"
-                    values:
-                    - "c3.xlarge"
-                    -  "t3.med"
       volumes: # define volume name at pod level
       - name: token-vol
         projected: # for service account types
