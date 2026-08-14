@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-depl
+  labels:
+    app: nginx
+    tier: front-end
+  namespace: dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      tier: front-end
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx
+        tier: front-end
+    spec:
+      containers:
+      - name: nginx
+        imagePullPolicy: IfNotPresent
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts: # mount volumes on container
+        - name: token
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          readOnly: true
+      serviceAccountName: aws-service-account
+      automountServiceAccountToken: false
+      tolerations:
+      - key: "vm"
+        operator: "Equal"
+        value: "dev"
+        effect: "NoSchedule"
+      - key: "vm"
+        operator: "Equal"
+        value: "stage"
+        effect: "PreferNoSchedule"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: "hw"
+                    operator: "In"
+                    values:
+                    - "c3.xlarge"
+                    -  "t3.med"
+      volumes: # define volume name at pod level
+      - name: token
+        projected: # for service account types
+          sources:
+          - serviceAccountToekn:
+            name: token
