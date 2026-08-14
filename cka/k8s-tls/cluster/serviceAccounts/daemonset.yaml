@@ -13,7 +13,6 @@ spec:
       tier: front-end
   template:
     metadata:
-      name: nginx-pod
       labels:
         app: nginx
         tier: front-end
@@ -25,13 +24,13 @@ spec:
         ports:
         - containerPort: 80
         volumeMounts: # mount volumes on container
-        - name: token
+        - name: token-vol # vol name
           mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           readOnly: true
-        - name: db-connector
+        - name: db-connector-vol # refere vol name
           mountPath: /var/app/db-connector
           readOnly: true
-        - name: db-password
+        - name: db-password-vol # refere vol name
           mountPath: /var/app/db-password
           readOnly: true
         env: # this is also a version of how to inject env value directly into pod
@@ -46,12 +45,39 @@ spec:
               name: db_pswd # secrets file name
               key: psswd # secrets data key
         resources:
-          limits:
-            cpu: "100m"
-            memory: "256Mi"
           requests:
             cpu: "50m"
             memory: "126Mi"
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+        # startup probes
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
+          successThreshold: 1
+        startupProbe: 
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
       serviceAccountName: aws-service-account
       automountServiceAccountToken: false
       tolerations:
@@ -64,12 +90,15 @@ spec:
         value: "stage"
         effect: "PreferNoSchedule"
       volumes: # define volume name at pod level
-      - name: token
+      - name: token-vol
         projected: # for service account types
           sources:
-          - serviceAccountToekn:
-            name: token
-          - configMap:
-            name: db-connector # use the configmap with same name 
-          - secret:
-            name: db-password # use secret with same name
+          - serviceAccountToken:
+              path: token
+              expirationSeconds: 3600
+      - name: db-connector-vol # volumes name
+        configMap:
+          name: db-connector # use the configmap with same name 
+      - name: db-password-vol # volumme name
+        secret:
+          secretName: db-password # secrets file name 
