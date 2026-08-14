@@ -46,6 +46,13 @@ spec:
             secretKeyRef:
               name: db_pswd # secrets file name
               key: psswd # secrets data key
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+          requests:
+            cpu: "50m"
+            memory: "126Mi"
       serviceAccountName: aws-service-account
       automountServiceAccountToken: false
       tolerations:
