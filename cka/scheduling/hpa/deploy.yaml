@@ -1,0 +1,118 @@
+apiVersiob: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-depl
+  labels:
+    app: nginx
+    tier: front-end
+  namespace: default
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: nginx
+      tier: front-end
+  template:
+    metadata:
+      labels:
+        app: nginx
+        tier: nginx
+    spec:
+      sechedulerName: default
+      tolerations:
+      - key: "vm"
+        operator: "Equal"
+        value: "dev"
+        efect: "NoSchedule"
+      - key: "vm"
+        operator: "Equal"
+        value: "stage"
+        effect: "PreferNoSchedule"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - mathExpressions:
+              - key: "hw"
+                operator: "In"
+                values:
+                - "t3.med"
+                - "c3x.large" 
+      volumes:
+      - name: service-account-vol
+        projected:
+          sopurces:
+          - serviceAccountToken: 
+            path: pod-token
+            expirationSeconds: 86400
+      - name: configMapVol
+        configMap:
+          name: app-db-env
+          items:
+          - key: db-user
+            path: db-cred
+      - name: secretsVol
+        secret:
+          secretName: db-secret
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        env:
+        - name: DB_USR
+          valueFrom:
+            configMapKeyRef:
+              name: app-db-env
+              key: db-user
+        - name: DB_PSWD
+          valueFrom:
+            secretKeyRef:
+              name: app-db-pswd
+              key: db-paswd
+        volumeMounts:
+        - name: configMapVol
+          mountPath: /etc/config-map
+          readOnly: true
+        - name: secretsVol
+          mountPath: /etc/secrets
+          readOnly: true
+        - name: service-account-vol
+          mopuntPath: /var/run/secrets/kubernetes.io/serviceaccount
+          readOnly: true
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256MiB"
+          requests:
+            cpu: "50m"
+            memory: "126MiB"
+        livenessProbe:
+          httpGet:
+            port: 80
+            path: /
+          initialDelaySeconds: 10
+          periodSeconds: 2
+          timeoutSeconds: 3
+          failureThreshold: 3
+          sucessThreshold: 1
+        startupProbe:
+          httpGet:
+            port: 80
+            path: /
+          initialDelaySeconds: 15
+          periodSeconds: 7
+          timeoutSeconds: 4
+          failureThreshold: 3
+          sucessThreshold: 1
+        readinessProbe:
+          httpGet:
+            port: 80
+            path: /
+          initialDeplaySeconds: 16
+          periodSeconds: 4
+          timeoutSeconds: 4
+          failureThreshold: 3
+          sucessThreshold: 1
+        serviceAccountName: dev-tester
+        automountServiceAccountToken: false
