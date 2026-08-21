@@ -24,4 +24,10 @@
   }
   ]'
   - a live patch that sticks ingress controller pod on dev-worker node
+  - dont forget to add 
+    - $ kubectl create secret docker-registry reg-name \
+        --docker-server=https://index.docker.io/v1/ \
+        --docker-email=your-email-docker-@email.com \
+        --docker-username=doc_usr \
+        --docker-password=dock_passwd -> before deploying app.
 - kubectl apply of deployment.yaml service.yaml ingress.yaml
