@@ -1,0 +1,128 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-depl
+  labels:
+    app: nginx
+    tier: front-end
+  namespace: dev
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      tier: front-end
+  template:
+    metadata:
+      labels:
+        app: nginx
+        tier: front-end
+    spec:
+      securityContext: # pod level security context which ovverides container level.
+        runAsUSer: 1001 and other arguments can be configured from k8s doc ref.
+        runAsNonRoot: true
+        runAsGroup: 200
+      containers:
+      - name: nginx
+        imagePullPolicy: IfNotPresent
+        imagePullSecret: registry-name-secret # privaet container registry image pull
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts: # mount volumes on container
+        - name: token-vol # vol name
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          readOnly: true
+        - name: db-connector-vol # refere vol name
+          mountPath: /var/app/db-connector
+          readOnly: true
+        - name: db-password-vol # refere vol name
+          mountPath: /var/app/db-password
+          readOnly: true
+        env: # this is also a version of how to inject env value directly into pod
+        - name: DB_USR
+          valueFrom:
+            configMapKeyRef:
+              name: db_env # configmap name
+              key: db-user # configmap key ion data
+        - name: DB_PSWD
+          valueFrom:
+            secretKeyRef:
+              name: db_pswd # secrets file name
+              key: psswd # secrets data key
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "126Mi"
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+        # startup probes
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
+          successThreshold: 1
+        startupProbe: 
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
+        securityContext: # container level security for user
+          capabilities:
+            add: ["SYS_USER"]
+            drop: ["all"]
+          runAsNonRoot: true
+          runAsUser: 1001
+          runAsGroup: 200
+      serviceAccountName: aws-service-account
+      automountServiceAccountToken: false
+      tolerations:
+      - key: "vm"
+        operator: "Equal"
+        value: "dev"
+        effect: "NoSchedule"
+      - key: "vm"
+        operator: "Equal"
+        value: "stage"
+        effect: "PreferNoSchedule"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: "hw"
+                    operator: "In"
+                    values:
+                    - "c3.xlarge"
+                    -  "t3.med"
+      volumes: # define volume name at pod level
+      - name: token-vol
+        projected: # for service account types
+          sources:
+          - serviceAccountToken:
+              path: token
+              expirationSeconds: 3600
+      - name: db-connector-vol # volumes name
+        configMap:
+          name: db-connector # use the configmap with same name 
+      - name: db-password-vol # volumme name
+        secret:
+          secretName: db-password # secrets file name 
+---
