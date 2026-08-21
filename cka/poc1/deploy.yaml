@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: static-page
+  labels:
+    app: html
+    tier: poc
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: html
+      tier: poc
+  template:
+    metadata:
+      labels:
+        app: html
+        tier: poc
+    spec:
+      imagePullSecrets:
+      - name: img-reg
+      containers:
+      - name: static-page
+        imagePullPolicy: IfNotPresent
+        image: shriram2105/img:1.0.0
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+          requests:
+            cpu: "50m"
+            memory: "126Mi"
