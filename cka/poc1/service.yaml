@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-service
+  name: html-service
   labels:
-    app: nginx
+    app: html
     tier: poc
   namespace: default
 spec:
   type: ClusterIP
   selector:
-    app: nginx # should match pod selector
+    app: html # should match pod selector
   ports:
   - name: http
     port: 80 # service port

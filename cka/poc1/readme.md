@@ -14,8 +14,8 @@
   --selector=app.kubernetes.io/component=controller \
   --timeout=90s
   - wait for nginx ingress controller to be ready
-- $ kubectl label node dev-worker ingress-ready=true --overwrite to 
-  scheduleingress on node dev-worker.
+- $ kubectl label node dev-worker ingress-ready=true --overwrite 
+    to schedule ingress on node dev-worker.
 - $ kubectl patch deployment ingress-nginx-controller -n ingress-nginx --type='json' -p='[
   {
     "op": "add",

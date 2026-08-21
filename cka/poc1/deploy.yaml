@@ -1,27 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-depl
+  name: static-page
   labels:
-    app: nginx
+    app: html
     tier: poc
   namespace: default
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: nginx
+      app: html
       tier: poc
   template:
     metadata:
       labels:
-        app: nginx
+        app: html
         tier: poc
     spec:
+      imagePullSecrets:
+      - name: img-reg
       containers:
-      - name: nginx
+      - name: static-page
         imagePullPolicy: IfNotPresent
-        image: nginx:alpine
+        image: shriram2105/img:1.0.0
         ports:
         - containerPort: 80
         resources:
