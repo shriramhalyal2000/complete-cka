@@ -1,6 +1,6 @@
 FROM nginx:alpine AS builder
 WORKDIR /app
-COPY index.html .
+COPY . .
 
 FROM nginx:alpine-slim
 RUN rm -rf /usr/share/nginx/html/*
