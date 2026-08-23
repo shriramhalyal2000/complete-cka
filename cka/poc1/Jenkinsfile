@@ -1,0 +1,55 @@
+pipeline{
+    agent{
+        nodes{
+            label "docker_agent"
+        }
+    }
+    envionment{
+        DOCKER_USER="shriram2105"
+        IMG_NAME="img"
+        TAG="${env.BUILD_NUMBER}"
+        DOCKER_CREDS="dockerhub-creds" # configure in global creds.
+        DEPLOY="static-page"
+    }
+    stages{
+        stage("checkout"){
+            steps{
+                checkout scm # scm defined with porject configuration step
+            }
+        }
+        stage("build"){
+            sh """
+            echo "building image ..."
+            docker build -t ${IMG_NAME}:${TAG} .
+            docker tag ${IMG_NAME}:${TAG} ${DOCKER_USER}/${IMG_NAME}:${TAG}
+            """
+        }
+        stage("push"){
+            steps{
+                sh """
+                echo "pushing image to registry"
+                echo "${DOCKER_CREDS}" | docker login -u "${DOCKER_USER}" --passwrod-stdin
+                docker push ${DOCKER_USER}/${IMG_NAME}:${TAG}
+                """
+            }
+        }
+        stage("deploy"){
+            steps{
+                sh """
+                alias k=kubectl
+                k delete deploy ${DEPLOY}
+                for file in deploy.yaml service.yaml ingress.yaml;do k apply -f $file;done
+                for status in deploy svc ingress;do k get $status;done
+                """
+            }
+        }
+        stage()
+    }
+    post(
+        always{
+            sh """
+            echo "build finished with status:"${currentBuild.currentResult}"
+            """
+        }
+    )
+}
