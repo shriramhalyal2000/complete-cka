@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: internal-net-pol
+  namespace: default
+spec:
+  podSelector: # target pod on which net-pol applied on
+    matchLabels:
+      name: mysql-pod
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress: # defined from which pod ingress traffic allowed
+  - from:
+    - podSelector: # can have as many pods podSelectors 
+        matchLabels:
+          name: backend-pod 
+    ports:
+      - protocol: TCP # UDP 
+        port: 3306 # port number of mysql-pod to have access for backend-pod
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          name: egress-pod
+    ports:
+    - protocol: TCP
+      port: 8000
