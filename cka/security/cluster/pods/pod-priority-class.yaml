@@ -1,0 +1,8 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: pod-high-priority
+value: 1000000 # value from - 2.147 bill to + 1000000000
+globalDefault: false
+preemptionPolicy: PreemptLowerPriority # any pods without this policy in pod sepc will be preempted for scheduling by pods with this policy.
+description: "This is for pods with high priority scheduling, with pre-emption over low value pod premption value"
