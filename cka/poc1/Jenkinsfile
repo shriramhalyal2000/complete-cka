@@ -1,55 +1,63 @@
 pipeline{
-    agent{
-        nodes{
-            label "docker_agent"
-        }
-    }
-    envionment{
-        DOCKER_USER="shriram2105"
-        IMG_NAME="img"
-        TAG="${env.BUILD_NUMBER}"
-        DOCKER_CREDS="dockerhub-creds" # configure in global creds.
-        DEPLOY="static-page"
+    agent any
+    environment{
+        REGISTRY = "shriram2105"
+        IMG  = "web-app"
+        BUILD_RESULT = "${currentBuild.result}"
+        CURRENT_RESULT = "${currentBuild.currentResult}"
     }
     stages{
-        stage("checkout"){
+        stage('SCM Checkout'){
             steps{
-                checkout scm # scm defined with porject configuration step
+                checkout scm
             }
         }
-        stage("build"){
-            sh """
-            echo "building image ..."
-            docker build -t ${IMG_NAME}:${TAG} .
-            docker tag ${IMG_NAME}:${TAG} ${DOCKER_USER}/${IMG_NAME}:${TAG}
-            """
-        }
-        stage("push"){
+        stage('Build'){
             steps{
-                sh """
-                echo "pushing image to registry"
-                echo "${DOCKER_CREDS}" | docker login -u "${DOCKER_USER}" --passwrod-stdin
-                docker push ${DOCKER_USER}/${IMG_NAME}:${TAG}
-                """
+                sh '''
+                echo "---building Image---"
+                docker build -t "$IMG:$BUILD_NUMBER" .
+                '''
             }
         }
-        stage("deploy"){
+        stage('Tag&Push'){
             steps{
-                sh """
-                alias k=kubectl
-                k delete deploy ${DEPLOY}
-                for file in deploy.yaml service.yaml ingress.yaml;do k apply -f $file;done
-                for status in deploy svc ingress;do k get $status;done
-                """
+                withCredentials([
+                    usernamePassword(
+                        credentialsId : 'DOCKER_CRED',
+                        usernameVariable: 'USR',
+                        passwordVariable: 'PSWD'
+                    )
+                ]){
+                    sh '''
+                    echo "---docker login---"
+                    echo "$PSWD" | docker login -u "$USR" --password-stdin
+                    echo "---tag img---"
+                    docker tag "$IMG:$BUILD_NUMBER" "$REGISTRY/$IMG:$BUILD_NUMBER"
+                    echo "---pushing img---"
+                    docker push "$REGISTRY/$IMG:$BUILD_NUMBER"
+                    '''
+                }
             }
         }
-        stage()
+        stage('Deploy'){
+            steps{//considering cluster is runnig with ingress controller configured
+                sh '''
+                for file in deploy.yaml svc.yaml ingress.yaml;do kubectl apply -f "$file"; done
+                echo "---status---"
+                for status in deploy pods svc; do kubectl get "$status";done
+                '''
+            }
+        }
     }
-    post(
+    post{
         always{
-            sh """
-            echo "build finished with status:"${currentBuild.currentResult}"
-            """
+            sh '''
+            echo "current build status:$BUILD_RESULT || $CURRENT_RESULT"
+            '''
         }
-    )
+        failure{
+            mail to: 'sshalya42@gmail.com', subject: 'Build fail.'
+        }
+    }
 }

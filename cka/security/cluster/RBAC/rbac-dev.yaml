@@ -1,0 +1,17 @@
+apiVersion: rbac.authorisation.k8s.io/v1
+kind: Role
+metadata:
+  name: developer
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list", "get", "create", "update", "delete"]
+- apiGroups: [""] # apis api metrics version logs healthz
+  resources: ["configMap"]
+  verbs: ["create"]
+- apiGroups: [""] # deployment uses apis/v1 api group
+  resouces: ["deployment"]
+  verbs: ["get", "describe"]
+- apiGroups: [""] # across these api groups, who uses these resouces, namespace uses v1 api
+  resouces: ["namespaces"]
+  verbs: ["get", "create"]

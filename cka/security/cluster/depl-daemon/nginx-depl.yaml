@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-depl
+  labels:
+    app: nginx
+    tier: front-end
+  namespace: dev
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 3
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx
+        tier: front-end
+    spec:
+      tolerations:
+      - key: "hw"
+        operator: "Equal"
+        value: "hp"
+        effect: "NoSchedule"
+      - key: "hw"
+        operator: "Equal"
+        value: "lp"
+        effect: PreferNoSchedule
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "vm"
+                operator: "In"
+                values:
+                - "dev"
+                - "prod"
+      containers:
+      - name: nginx-container
+        imagePullPolicy: IfNotPresent
+        image: nginx:alpine
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+          requests:
+            cpu: "50m"
+            memory: "126Mi"

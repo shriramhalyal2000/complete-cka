@@ -1,0 +1,13 @@
+apiVersion: certificates.k8s.io/v1
+kind: CertificateSiginingRequest
+metdata:
+  name: admin-user-csr
+spec:
+  group:
+  - system:administatio # or any group group already created for user with perms
+  request: < file-name.csr with base64 -w 0 $ filename.csr | base64 -w 0 output paste>
+  signerName: kubernetes.io/kube-apiserver-client # ususally cetificate-api
+  expirationSeconds: 300 # custom time for which request is auto rejected and request window expires
+  usages:
+  - client auth
+  - digital signature
