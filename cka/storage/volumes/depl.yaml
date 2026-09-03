@@ -1,0 +1,61 @@
+apiVErsion: v1
+kind: Deployment
+metadata:
+  name: nginx-depl
+  namespace: default
+  labels:
+    app: nginx
+    tier: front-end
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+        tier: front-end
+    spec:
+      affinity:
+        nodeAffinity:
+          RequiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "node"
+                operator: "In"
+                values:
+                - "t3.micro"
+      tolerations:
+      - key: "env"
+        operator: "Equal"
+        value: "Dev"
+        effect: "NoSchedule"
+      containers:
+      - name: nginx
+        imagePullPolicy: IfNotPresent
+        image: nginx:alpines
+        ports:
+        - containerPOrt: 80
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+          requests:
+            cpu: "50m"
+            memory: "126Mi"
+        env:
+        - name: login # enviornment name
+          valueFrom:
+            configMapKeyRef:
+              name: cred # configMap name
+              key: user-login
+        volumeMounts:
+        - name: login-vol
+          mountPath:
+            path: /etc/app/creds/
+      volumes: # define volume name, what kind, and kind name
+      - name: login-vol #new volume to attach to path
+        configMap:
+          name: cred # configmap name
+        
