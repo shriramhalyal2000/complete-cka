@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-vol
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  awsElasticBlockstore: #in prod CSI pluggin is used not node vol.
+    volumeId: <volume-id> # awsebsarn/id
+    fsType: ext4 # fs type
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-claim
+spec:
+  accessModes:
+  - ReadWriteOnly
+  resources:
+    requests:
+      storage: 500Mi
