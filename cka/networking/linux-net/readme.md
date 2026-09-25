@@ -19,5 +19,21 @@
   for this to have bidirectional, ip addr add <> via <> should be enabled on both sender and reciver systems to have ip forwarding.
   - to check ip forwarding enabled or not in your system
     - $ cat /proc/sys/net/ipv4/ip_forward
-  - 
+  - Uses Ip table and gateway.
   - ![routing](image-1.png)
+
+  System as a Router:
+  - A system connect to other system on different network can also act as router to route traffic 
+  - ipforwarding should be enabled with port to port packet forwarding.
+  - the middleware system should have proper configurations enabled in order to act as a router.
+  - system networking component as eth0-eth1 ipforwarding should be enabled.
+  - cat /proc/sys/net/ipv4/ip_forward. to check is ipv4 ip forwarding enabled.
+
+  DNS:
+  - Mapping an IP with readable name with a host IP.
+  - Domain Name Service.
+  - If a private network has too many serves with distinct role, remembering and catalogging them in use is difficult for use.
+  - So instead of 12 digit ip number assigning them to a readable name makes it less complicated.
+  - in a private network a seperate dedicated nameserver is deployed with ip mapped with DNS so host servers can use that DNS server as resolv.conf in their own /etc/resolv.conf.
+  - If a just host name needs to map an ip to a name, /etc/hosts can have ip mapped to a name.
+  - so everytime a dns is pinged, then os looks up the dir for ip mapping then pings the required host with said dns mapped with IP.
