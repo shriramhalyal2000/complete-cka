@@ -20,3 +20,6 @@
   - If the vol claim request is lesser than the available vol, k8s will will bind that vol with cliam, if nother option is available.
   - Once PVC request is initiatedno other pvc is allocate dthe volume untill its relased or deleted.
   - That Claim can be used to reference within pods, so pods can directly use PVC with PV bind for application.
+
+- storage classes;
+  - instead of manually provisioning PV, use storage class, outside cloud providers to automatically provision PV for claims.

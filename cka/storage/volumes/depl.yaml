@@ -52,10 +52,14 @@ spec:
               key: user-login
         volumeMounts:
         - name: login-vol
-          mountPath:
-            path: /etc/app/creds/
+          mountPath: /etc/app/creds/
+        - name: vol-log
+          mountPath: /log
       volumes: # define volume name, what kind, and kind name
       - name: login-vol #new volume to attach to path
         configMap:
           name: cred # configmap name
+      - name: vol-log
+        persistentVolumeClaim:
+          claimName: my-claim # macth with persistentvolumeclaim resource name
         

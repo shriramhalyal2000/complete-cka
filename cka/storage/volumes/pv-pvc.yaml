@@ -16,8 +16,18 @@ kind: PersistentVolumeClaim
 metadata:
   name: my-claim
 spec:
+  storageClassName: gcp-storage
   accessModes:
   - ReadWriteOnly
   resources:
     requests:
       storage: 500Mi
+---
+apiVersion: storage.k8s.io/v1 # intead of manually craeting PV creats automatically provisions gcp disk for storage
+kind: StorageClass
+metadata:
+  name: gcp-storage # reference this in PVC 
+provisioner: kubernetes.io/gcr-pd
+parameters:
+  type: pd-standard
+  replication-type:  none | regaional-pd
